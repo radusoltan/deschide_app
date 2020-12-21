@@ -23,7 +23,7 @@
                     @foreach($category->articles as $article)
                     <tr>
                         <td>
-                            <a href="{{ route('admin.content.article.edit',$article) }}">{{ $article->title }}</a>
+                            <a href="{{ route('admin.content.article.edit',['locale'=>app()->getLocale(),'article'=>$article]) }}">{{ $article->title }}</a>
 
                         </td>
                         <td>{{ $article->status }}</td>
@@ -38,6 +38,7 @@
                     <div class="modal fade" id="translateModal" tabindex="-1" aria-labelledby="translateModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
+
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="translateModalLabel">Translate Article</h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -45,8 +46,14 @@
                                     </button>
                                 </div>
                                 <div class="modal-body">
+                                    {!! Form::model($article, ['route' => ['admin.content.article.translate', ['locale'=>app()->getLocale(),'article'=> $article]], 'method' => 'post']) !!}
+                                    {!! Form::hidden('lead', $article->lead)!!}
+                                    {!! Form::hidden('content', $article->content)!!}
                                     <p>Actual language: <b>{{ config('translatable.locales')[app()->getLocale()] }}</b></p>
-                                    <p>Title: {{ $article->title }}</p>
+                                    <p>Title <small>(not translated)</small>:</p>
+                                    <div class="form-group">
+                                        {!! Form::text('title', $article->title, ['class' => 'form-control']) !!}
+                                    </div>
                                     <div class="form-group">
                                         <select name="lang" id="lang" class="form-control">
                                         @foreach(config('translatable.locales') as $langKey => $lang)
@@ -56,12 +63,10 @@
                                         @endforeach
                                         </select>
                                     </div>
+                                    <button type="submit" class="btn btn-primary">Save changes</button>
+                                    {!! Form::close() !!}
+                                </div>
 
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary">Save changes</button>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -75,7 +80,7 @@
     <div class="modal fade" id="article-modal" tabindex="-1" role="dialog" aria-labelledby="article-modalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <form action="{{ route('admin.content.article.store',['category'=>$category->id]) }}" method="POST">
+                <form action="{{ route('admin.content.article.store',['locale'=>app()->getLocale(),'category'=>$category->id]) }}" method="POST">
                     @csrf
                     <input type="hidden" name="category_id" value="{{ $category->id }}">
                     <div class="modal-header">

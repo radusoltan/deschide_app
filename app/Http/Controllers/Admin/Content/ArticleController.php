@@ -41,12 +41,12 @@ class ArticleController
         return redirect()->route('content.article.edit',$article);
     }
 
-    public function edit(Article $article){
+    public function edit(string $lang,Article $article){
         $pageHeader = 'Article edit';
         return view('admin.content.article.edit',compact('article','pageHeader'));
     }
 
-    public function update(Article $article){
+    public function update(string $lang,Article $article){
 
         $article->update([
             'title' => request('title'),
@@ -55,7 +55,7 @@ class ArticleController
             'content' => request('content')
         ]);
 //        dump($article->category);
-        return redirect()->route('content.category.show',$article->category);
+        return redirect()->route('admin.content.category.show',['locale'=>app()->getLocale(),'category'=>$article->category]);
 
     }
 
@@ -65,8 +65,16 @@ class ArticleController
             ->with('success','Article deleted successfuly');
     }
 
-    public function articleTranslate(Article $article){
-
+    public function articleTranslate(string $lang,Article $article){
+        app()->setLocale(request('lang'));
+        $article->update([
+            'title' => request('title'),
+            'slug' => Str::slug(request('title')),
+            'content' => request('content'),
+            'lead' => request('lead')
+        ]);
+//
+        return back();
     }
 
 }

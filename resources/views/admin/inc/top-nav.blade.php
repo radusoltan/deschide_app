@@ -43,9 +43,17 @@
                 @endif
             </a>
             <div class="dropdown-menu dropdown-menu-right p-0">
-                @foreach (config('translatable.locales') as $localeKey => $locale)
+                @foreach (config('app.locales') as $localeKey => $locale)
                     @if(app()->getLocale() !== $localeKey)
-                    <a class="dropdown-item" href="{{ route(\Illuminate\Support\Facades\Route::currentRouteName(), $localeKey) }}"> {{ $locale }}</a>
+                        @if(\Illuminate\Support\Facades\Route::current()->getName() === 'admin.content.category.show' || \Illuminate\Support\Facades\Route::current()->getName() === 'admin.content.category.edit')
+                            <a class="dropdown-item" href="{{ route(\Illuminate\Support\Facades\Route::currentRouteName(), ['locale'=>$localeKey, 'category'=>$category]) }}"> {{ $locale }}</a>
+                        @elseif(\Illuminate\Support\Facades\Route::current()->getName() === 'admin.content.article.show' || \Illuminate\Support\Facades\Route::current()->getName() === 'admin.content.article.edit')
+                            <a href="{{ route(\Illuminate\Support\Facades\Route::currentRouteName(),['locale'=>$localeKey,'article'=>$article]) }}" class="dropdown-item">{{ $locale }}</a>
+                        @else
+                            <a class="dropdown-item" href="{{ route(\Illuminate\Support\Facades\Route::currentRouteName(), $localeKey) }}"> {{ $locale }}</a>
+                        @endif
+
+
                     @endif
                 @endforeach
             </div>

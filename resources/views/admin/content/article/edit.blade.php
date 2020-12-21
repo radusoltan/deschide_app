@@ -4,7 +4,7 @@
 <div class="col-12">
     <div class="card">
         <div class="card-body">
-            <form action="{{ route('admin.content.article.update',$article) }}" method="POST">
+            <form action="{{ route('admin.content.article.update',['locale'=>app()->getLocale(),'article'=>$article]) }}" method="POST">
                 @csrf
                 @method('PATCH')
                 <div class="form-group">

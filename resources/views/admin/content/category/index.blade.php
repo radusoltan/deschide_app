@@ -26,7 +26,7 @@
                         @foreach($categories as $category)
                             <tr>
                                 <td>{{ $category->id }}</td>
-                                <td><a href="{{ route('admin.content.category.show',$category) }}">{{ $category->name }}</a></td>
+                                <td><a href="{{ route('admin.content.category.show',['category'=>$category,'locale'=>app()->getlocale()]) }}">{{ $category->name }}</a></td>
                                 <td>
                                     <input type="checkbox" class="icheck-primary" name="in_menu" @if($category->in_menu) checked @endif>
                                 </td>
@@ -49,8 +49,9 @@
                                                 <div class="form-group">
                                                     <strong>Language:</strong>
                                                     <select name="translate-to-locale" id="locale" class="form-control">
-                                                        <option value="ro">Romanian</option>
-                                                        <option value="en">English</option>
+                                                        @foreach (config('app.locales') as $localeKey => $locale)
+                                                        <option value="{{$localeKey}}">{{ $locale }}</option>
+                                                        @endforeach
                                                     </select>
                                                 </div>
 

@@ -41,21 +41,32 @@ class CategoryController extends Controller
             'in_menu' => request('in_menu') ? true : false
         ]);
 
-        return redirect()->route('content.category.index')->with('success','Category saved successfully');
+        return redirect()->route('admin.content.category.index',app()->getLocale())->with('success','Category saved successfully');
 
     }
 
-    public function show(Category $category){
+    public function show(string $lang,Category $category){
         $pageHeader = $category->name;
         $article = new Article();
         return view('admin.content.category.show',compact('category','pageHeader','article'));
     }
 
-    public function edit($lang,Category $category){
+    public function edit(string $lang,Category $category){
         return view('admin.content.category.edit',compact('category'));
     }
 
-    public function update(Category $category){
+    public function update(string $lang,Category $category){
+        $this->validate(request(),[
+            'name' => 'required'
+        ]);
+
+        $category->update([
+            'name' => request('name'),
+            'slug' => Str::slug(request('name')),
+            'in_menu' => request()->has('in_menu')
+        ]);
+
+        return redirect()->route('admin.content.category.index',['locale'=>app()->getLocale()]);
 
     }
 
@@ -63,14 +74,14 @@ class CategoryController extends Controller
 
     }
 
-    public function categoryTranslate(Category $category){
-//        dd();
+    public function categoryTranslate(string $lang, Category $category){
+        app()->setLocale(request('translate-to-locale'));
+
         $category->update([
-            request('translate-to-locale') => [
-                'name' => request('name'),
-                'slug' => Str::slug(request('name'))
-            ]
+            'name' => request('name'),
+            'slug' => Str::slug(request('name'))
         ]);
+
         return back()->with('success','Category was translated');
     }
 
